@@ -23,9 +23,7 @@ class Level {
     Block[][] out=new Block[cols][rows];
     for (int i=0; i<cols; i++) {
       for (int j=0; j<rows; j++) {
-        if (array[i][j]==1) { 
-          out[i][j]=new Block(i, j, 1);
-        } else out[i][j]=new Block(i, j, 0);
+        out[i][j]=new Block(i, j, array[i][j]);
       }
     }
     return out;
@@ -33,9 +31,11 @@ class Level {
 
 
   void playerTouch(Player p) {
-    Block b=layout[p.col][p.row+1];//check block below
-    if (p.inside(b, 2)) {
-      b.touched();
+    if (p.row<rows-1) {//check block below
+      Block b=layout[p.col][p.row+1];
+      if (p.inside(b, 2)) {
+        b.touched();
+      }
     }
     if (p.col<cols-1) {
       if (p.row>1) {

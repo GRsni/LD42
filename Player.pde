@@ -3,7 +3,7 @@ class Player {
   boolean ground, movingLeft, movingRight, slidingLeft, slidingRight, jumping;
   float w=15, h=20;
   float top, bottom, left, right;
-  int col, row;
+  int col, row, fCount;
 
 
   Player(PVector p) {
@@ -16,14 +16,32 @@ class Player {
   }
 
   void show() {
-    noStroke();
-    fill(255, 0, 0);
-    rect(pos.x, pos.y, w, h);
-    stroke(0);
-    strokeWeight(1);
-    line(pos.x+w/2, pos.y+h/2, pos.x+w/2+vel.x, pos.y+h/2+vel.y);
-    //println(ground, slidingLeft, slidingRight);
-    println((int)mouseX/blockSize, (int)mouseY/blockSize, col, row);
+
+    if (vel.mag()<.1) {
+      if (frameCount%15==0) {
+        fCount++;
+      }
+      if (fCount>1) {
+        fCount=0;
+      }
+
+      image(playerIdle[fCount], left, top);
+    } else {
+      if (frameCount%5==0) {
+        fCount++;
+      }
+      if (fCount>3) {
+        fCount=0;
+      }
+      if (movingRight||vel.x>0) {//moving to the right
+        image(playerRunR[fCount], left, top);
+      } else if (movingLeft||vel.x<0) {
+        image(playerRunL[fCount], left, top);
+      } if (vel.y>0) {
+        if (fCount>1) fCount=0;
+        image(playerFall[fCount], left, top);
+      }
+    }
   }
 
   void update() {
@@ -57,7 +75,7 @@ class Player {
     }
 
     vel.x=constrain(vel.x, -10, 10);
-    if (ground) vel.mult(.9);
+    if (ground) vel.mult(.75);
     else vel.mult(.98);
     lateralCollision(l.layout);
     pos.add(vel);
@@ -108,7 +126,7 @@ class Player {
     //for (int i=row; i<rows; i++) {
     if (row<rows-1) {
       Block b=l.layout[col][row+1];
-      if (b.alive&&b.type==1) {
+      if (b.alive) {
         if (inside(b, 2)) {
           ground=true;
           jumping=false;
@@ -125,73 +143,37 @@ class Player {
 
   void lateralCollision(Block[][] array) {
     if (col<cols-1) {//blocks to the right
-      Block bU=array[col+1][row-1];
       Block bL=array[col+1][row];
-      if (bU.type==1&&bU.alive) {
-        if (inside(bU, 1)) {
+      if (bL.alive) {
+        if (inside(bL, 1)) {
           slidingRight=true;
           vel.x=0;
-          pos.x=bU.left+w;
+          pos.x=bL.left-w-1;
         }
+      } else {
+        slidingRight=false;
+      }
+    } 
+    if (col>1) {//blocks to the left
+
+      Block bL=array[col-1][row];
+      if (bL.alive) {
+        if (inside(bL, 3)) {
+          println("sliding left");
+          slidingLeft=true;
+          vel.x=0;
+          pos.x=bL.right+1;
+        }
+      } else { 
+        slidingLeft=false;
       }
     }
-
-
-
-
-    //if (vel.x>0) {//moving to the right
-    //  if (col<cols-1) {
-    //    if (row>1) {
-    //      Block bLow=array[col+1][row];
-    //      Block bUp=array[col+1][row-1];
-    //      if ((bLow.type==1&&bLow.alive)||(bUp.type==1&&bUp.alive)) {
-    //        if (inside(bLow, 1)) {
-    //          pos.x=bLow.left-w;
-    //          vel.x=0;
-    //          if (!ground) {
-    //            slidingRight=true;
-    //          }
-    //        } else if (inside(bUp, 1)) {
-    //          pos.x=bUp.left-w;
-    //          vel.x=0;
-    //          if (!ground) {
-    //            slidingRight=true;
-    //          }
-    //        }
-    //      } else {
-    //        if (slidingRight) slidingRight=false;
-    //      }
-    //    }
-    //  }
-    //} else {//moving left
-    //  if (col>1) {
-    //    Block bLow=array[col-1][row];
-    //    Block bUp=array[col-1][row-1];
-    //    if ((bLow.type==1&&bLow.alive)||(bUp.type==1&&bUp.alive)) {
-    //      if (inside(bLow, 3)) {
-    //        pos.x=bLow.right;
-    //        vel.x=0;
-    //        if (!ground) {
-    //          slidingLeft=true;
-    //        }
-    //      } else if (inside(bUp, 1)) {
-    //        pos.x=bUp.right;
-    //        vel.x=0;
-    //        if (!ground) {
-    //          slidingLeft=true;
-    //        }
-    //      }
-    //    } else {
-    //      if (slidingLeft) slidingLeft=false;
-    //    }
-    //  }
-    //}
   }
 
   void checkTopCollision() {
     if (row>1) {
       Block b=l.layout[col][row-1];
-      if (b.type==1&&b.alive&&inside(b, 0)) {
+      if (b.alive&&inside(b, 0)) {
         vel.y=0;
         pos.y=b.bottom;
       }

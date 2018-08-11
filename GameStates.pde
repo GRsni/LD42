@@ -26,12 +26,27 @@ void menuPage() {
 
 void mainGame() {
   pushStyle();
-  background(#030146);
+  background(#01002D);
+  fill(255);
+  drawStars();
+  pushMatrix();
+  translate(20, 50);
+  rotate(radians(-15));
+  text("Loops: "+loopCounter, 20, 20);
+  popMatrix();
   //println(l.playerPos.x, l.playerPos.y);
   p.show();
   p.update();
   l.update(p);
   l.show();
+  for (int i=effects.size()-1; i>=0; i--) {
+    Effect e= effects.get(i);
+    e.show();
+    e.update();
+    if (e.life>45) { 
+      effects.remove(e);
+    }
+  }
   checkGameOver();
 
   popStyle();
