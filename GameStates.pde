@@ -27,10 +27,12 @@ void menuPage() {
 void mainGame() {
   pushStyle();
   background(#030146);
+  //println(l.playerPos.x, l.playerPos.y);
   p.show();
   p.update();
+  l.update(p);
   l.show();
-
+  checkGameOver();
 
   popStyle();
 }

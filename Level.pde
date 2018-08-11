@@ -1,17 +1,22 @@
 class Level {
   Block[][] layout=new Block[cols][rows];
+  PVector playerPos;
 
   Level(int[][] levelArray) {
     layout=setupLevel(levelArray);
+    playerPos=new PVector(levelArray[cols][0], levelArray[cols][1]);
   }
 
   void show() {
     for (int i=0; i<cols; i++) {
       for (int j=0; j<rows; j++) {
-
+        layout[i][j].update();
         layout[i][j].show();
       }
     }
+  }
+  void update(Player p) {
+    playerTouch(p);
   }
 
   Block[][] setupLevel(int[][] array) {
@@ -20,9 +25,37 @@ class Level {
       for (int j=0; j<rows; j++) {
         if (array[i][j]==1) { 
           out[i][j]=new Block(i, j, 1);
-        }else out[i][j]=new Block(i, j, 0);
+        } else out[i][j]=new Block(i, j, 0);
       }
     }
     return out;
+  }
+
+
+  void playerTouch(Player p) {
+    Block b=layout[p.col][p.row+1];//check block below
+    if (p.inside(b, 2)) {
+      b.touched();
+    }
+    if (p.col<cols-1) {
+      Block bU=layout[p.col+1][p.row-1];//check blocks to the left
+      Block bL=layout[p.col+1][p.row];
+      if (p.inside(bU, 1)) {
+        bU.touched();
+      } 
+      if (p.inside(bL, 1)) {
+        bL.touched();
+      }
+    }
+    if (p.col>1) {
+      Block bU=layout[p.col-1][p.row-1];//check blocks to the left
+      Block bL=layout[p.col-1][p.row];
+      if (p.inside(bU, 3)) {
+        bU.touched();
+      } 
+      if (p.inside(bL, 3)) {
+        bL.touched();
+      }
+    }
   }
 }

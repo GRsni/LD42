@@ -1,7 +1,7 @@
-static float grav=0.3;
+static float grav=0.5;
 Player p;
 Level l;
-int cols, rows, blockSize=30;
+int cols, rows, blockSize=20;
 int[][] levelLayout;
 //int[][] level={0, 0, 0, 0, 0, 0 , 
 
@@ -36,9 +36,10 @@ void draw() {
 
 void gameStart() {
   gameState=1;
-  p=new Player(new PVector(50, 200));
   levelLayout=readLevel();
   l=new Level(levelLayout);
+  PVector auxPos=new PVector(l.playerPos.x, l.playerPos.y);
+  p=new Player(auxPos);
 }
 
 void keyPressed() {
@@ -48,8 +49,18 @@ void keyPressed() {
     } else if (key=='d'||key=='D') {
       p.movingRight=true;
     }
+    if (key=='w'||key=='W') {
+      p.jump();
+    }
+    if (key=='r') {
+      resetGame();
+    }
+  }
+  if (key==' ') {
+    saveFrame("snapshot###.png");
   }
 }
+
 
 void keyReleased() {
   if (gameState==1) {
@@ -63,12 +74,34 @@ void keyReleased() {
 
 
 int[][] readLevel() {
-  int[][] out=new int[cols][rows];
+  int[][] out=new int[cols+1][rows];
   for (int i=0; i<cols; i++) {
     for (int j=0; j<rows; j++) {
-      if (i%10==0||i%11==0||j<10) out[i][j]=0;
-      else out[i][j]=1;
+      //if (j<15||((cols-i)<10&&j<10)) out[i][j]=0;
+      //else out[i][j]=1;
+      //out[i][j]=1;
+      if (i<10&&j>10) out[i][j]=1;
+      else if (i>50&&j>10) out[i][j]=1;
+      else if (j>20) out[i][j]=1;
+      else out[i][j]=0;
     }
-  }
+  }//player start position
+  //println(out[cols/2][25].aliv
+  out[cols][0]=600;
+  out[cols][1]=100;
   return out;
+}
+
+void checkGameOver() {
+  if (p.touchBottom()) {
+    //println(l.playerPos.x, l.playerPos.y);
+
+    resetGame();
+  }
+}
+
+void resetGame() {
+
+  l.layout=l.setupLevel(levelLayout);
+  p.reset();
 }
