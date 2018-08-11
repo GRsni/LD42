@@ -38,23 +38,27 @@ class Level {
       b.touched();
     }
     if (p.col<cols-1) {
-      Block bU=layout[p.col+1][p.row-1];//check blocks to the left
-      Block bL=layout[p.col+1][p.row];
-      if (p.inside(bU, 1)) {
-        bU.touched();
-      } 
-      if (p.inside(bL, 1)) {
-        bL.touched();
+      if (p.row>1) {
+        Block bU=layout[p.col+1][p.row-1];//check blocks to the left
+        Block bL=layout[p.col+1][p.row];
+        if (p.inside(bU, 1)) {
+          bU.touched();
+        } 
+        if (p.inside(bL, 1)) {
+          bL.touched();
+        }
       }
     }
     if (p.col>1) {
-      Block bU=layout[p.col-1][p.row-1];//check blocks to the left
-      Block bL=layout[p.col-1][p.row];
-      if (p.inside(bU, 3)) {
-        bU.touched();
-      } 
-      if (p.inside(bL, 3)) {
-        bL.touched();
+      if (p.row>1) {
+        Block bU=layout[p.col-1][p.row-1];//check blocks to the left
+        Block bL=layout[p.col-1][p.row];
+        if (p.inside(bU, 3)) {
+          bU.touched();
+        } 
+        if (p.inside(bL, 3)) {
+          bL.touched();
+        }
       }
     }
   }

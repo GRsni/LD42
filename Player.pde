@@ -22,10 +22,13 @@ class Player {
     stroke(0);
     strokeWeight(1);
     line(pos.x+w/2, pos.y+h/2, pos.x+w/2+vel.x, pos.y+h/2+vel.y);
+    //println(ground, slidingLeft, slidingRight);
+    println((int)mouseX/blockSize, (int)mouseY/blockSize, col, row);
   }
 
   void update() {
     updateIndexes();
+    updateLimits();
     //println(slidingLeft, slidingRight);
     PVector moving=new PVector(0, 0);
     if (movingLeft) {
@@ -43,25 +46,24 @@ class Player {
       }
     }
     acc.add(moving);
-    checkIfOnGround();
+    checkBottomCollision();
     checkTopCollision();
+    vel.add(acc);
     if (!ground&&(slidingLeft||slidingRight)) {
       //println("sliding speed");
       vel.y+=grav*.2;
     } else  if (!ground) {
       vel.y+=grav;
     }
-    vel.add(acc);
+
     vel.x=constrain(vel.x, -10, 10);
     if (ground) vel.mult(.9);
     else vel.mult(.98);
     lateralCollision(l.layout);
     pos.add(vel);
-
     pos.x=constrain(pos.x, 0, width-w);
     pos.y=constrain(pos.y, 0, height);
     acc.mult(0);
-    updateLimits();
   }
 
 
@@ -101,72 +103,89 @@ class Player {
     vel.mult(0);
   }
 
-  void checkIfOnGround() {
+  void checkBottomCollision() {
 
     //for (int i=row; i<rows; i++) {
+    if (row<rows-1) {
       Block b=l.layout[col][row+1];
       if (b.alive&&b.type==1) {
         if (inside(b, 2)) {
           ground=true;
           jumping=false;
           pos.y=b.top-h;
+          vel.y=0;
+        } else {
+          ground=false;
         }
-        //} else {
-        //  ground=false;
-        //}
-      
+      } else {
+        ground=false;
+      }
     }
   }
 
   void lateralCollision(Block[][] array) {
-
-    if (vel.x>0) {//moving to the right
-      if (col<cols-1) {
-        Block bLow=array[col+1][row];
-        Block bUp=array[col+1][row-1];
-        if ((bLow.type==1&&bLow.alive)||(bUp.type==1&&bUp.alive)) {
-          if (inside(bLow, 1)) {
-            pos.x=bLow.left-w;
-            vel.x=0;
-            if (!ground) {
-              slidingRight=true;
-            }
-          }
-          if (inside(bUp, 1)) {
-            pos.x=bUp.left-w;
-            vel.x=0;
-            if (!ground) {
-              slidingRight=true;
-            }
-          } else {
-            if (slidingRight) slidingRight=false;
-          }
-        }
-      }
-    } else {//moving left
-      if (col>1) {
-        Block bLow=array[col-1][row];
-        Block bUp=array[col-1][row-1];
-        if ((bLow.type==1&&bLow.alive)||(bUp.type==1&&bUp.alive)) {
-          if (inside(bLow, 3)) {
-            pos.x=bLow.right;
-            vel.x=0;
-            if (!ground) {
-              slidingLeft=true;
-            }
-          }
-          if (inside(bUp, 1)) {
-            pos.x=bUp.right;
-            vel.x=0;
-            if (!ground) {
-              slidingLeft=true;
-            }
-          } else {
-            if (slidingLeft) slidingLeft=false;
-          }
+    if (col<cols-1) {//blocks to the right
+      Block bU=array[col+1][row-1];
+      Block bL=array[col+1][row];
+      if (bU.type==1&&bU.alive) {
+        if (inside(bU, 1)) {
+          slidingRight=true;
+          vel.x=0;
+          pos.x=bU.left+w;
         }
       }
     }
+
+
+
+
+    //if (vel.x>0) {//moving to the right
+    //  if (col<cols-1) {
+    //    if (row>1) {
+    //      Block bLow=array[col+1][row];
+    //      Block bUp=array[col+1][row-1];
+    //      if ((bLow.type==1&&bLow.alive)||(bUp.type==1&&bUp.alive)) {
+    //        if (inside(bLow, 1)) {
+    //          pos.x=bLow.left-w;
+    //          vel.x=0;
+    //          if (!ground) {
+    //            slidingRight=true;
+    //          }
+    //        } else if (inside(bUp, 1)) {
+    //          pos.x=bUp.left-w;
+    //          vel.x=0;
+    //          if (!ground) {
+    //            slidingRight=true;
+    //          }
+    //        }
+    //      } else {
+    //        if (slidingRight) slidingRight=false;
+    //      }
+    //    }
+    //  }
+    //} else {//moving left
+    //  if (col>1) {
+    //    Block bLow=array[col-1][row];
+    //    Block bUp=array[col-1][row-1];
+    //    if ((bLow.type==1&&bLow.alive)||(bUp.type==1&&bUp.alive)) {
+    //      if (inside(bLow, 3)) {
+    //        pos.x=bLow.right;
+    //        vel.x=0;
+    //        if (!ground) {
+    //          slidingLeft=true;
+    //        }
+    //      } else if (inside(bUp, 1)) {
+    //        pos.x=bUp.right;
+    //        vel.x=0;
+    //        if (!ground) {
+    //          slidingLeft=true;
+    //        }
+    //      }
+    //    } else {
+    //      if (slidingLeft) slidingLeft=false;
+    //    }
+    //  }
+    //}
   }
 
   void checkTopCollision() {
