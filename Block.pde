@@ -26,6 +26,7 @@ class Block {
         if (touched) tint(250, 0, 0, 250);
         image(baseTile, left, top);
       } else if (type==2) {
+        image(spike, left, top);
       } else if (type==3) {
         image(safePlatform, left, top);
       } else if (type==4) {
@@ -66,8 +67,10 @@ class Block {
         lastTimeTouched=millis();
       }
     } else if (type==2) {
+      hit.play();
       resetGame();
     } else if (type==4) {
+      portal.play();
       loopLevel();
     }
   }

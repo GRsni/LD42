@@ -40,6 +40,8 @@ class Player {
       } else if (vel.y>0&&vel.y>abs(vel.x)) {//if falling
         if (fCount>1) fCount=0;
         image(playerFall[fCount], left, top);
+      } else { 
+        image(playerRunR[0], left, top);
       }
     }
   }
@@ -98,6 +100,7 @@ class Player {
 
   void jump() {
     if (ground) {
+      jump.play();
       ground=false;
       jumping=true;
       //println("jumping");
@@ -108,11 +111,13 @@ class Player {
     } else {
       float jumpAmount=15;
       if (slidingLeft) {
+        jump.play();
         float angle=315;
         PVector jumpDir=PVector.fromAngle(radians(angle)).setMag(jumpAmount);
         vel.add(jumpDir);
         pos.add(vel);
       } else if (slidingRight) {
+        jump.play();
         float angle=235;
         PVector jumpDir=PVector.fromAngle(radians(angle)).setMag(jumpAmount);
         vel.add(jumpDir);
@@ -133,7 +138,7 @@ class Player {
   }
 
   void reset() {
-    setPos(l.startX,l.startY);
+    setPos(l.startX, l.startY);
     acc.mult(0);
     vel.mult(0);
   }

@@ -1,7 +1,7 @@
 void menuPage() {
   pushStyle();
   background(#030146);
-   drawStars();
+  drawStars();
   textSize(25);
   fill(255);
   text("LD 42", 50, 50);
@@ -10,7 +10,7 @@ void menuPage() {
   fill(200, 200, 0);
   textSize(70);
   textAlign(CENTER, CENTER);
-  text("Don't stop!", width/2, 200);
+  text("Don't stop\nrunning!", width/2, 200);
 
   noStroke();
   fill(100);
@@ -21,11 +21,16 @@ void menuPage() {
   if (mouseX>width/2-200&&mouseX<width/2+200&&mouseY>350&&mouseY<425) {
     fill(100);
     textSize(15);
-    text("Seriously, you shouldn't stop.", width/2, 250);
+    text("Seriously, you shouldn't stop.", width/2, 450);
 
     if (mousePressed) {
-      println("start");
-      gameStart();
+      if (firstScreen) {
+        println("start");
+        gameStart();
+      } else {
+        firstScreen=true;
+        gameState=3;
+      }
     }
   }
 
@@ -37,7 +42,7 @@ void mainGame() {
   pushStyle();
   background(#01002D);
   fill(255);
- drawStars();
+  drawStars();
 
   pushMatrix();
   translate(20, 50);
@@ -75,15 +80,48 @@ void mainGame() {
   popStyle();
 }
 
-void introPage(){
+void introPage() {
   pushStyle();
   background(#030146);
-   drawStars();
-  //fill(
+  drawStars();
+  fill(255);
+  textSize(30);
+  text("Hey, listen!\nYou've escaped from the nearly-impossible-to-escape space jail, but your only way out is through a series of portals. "+
+    "Move with A and D, and jump with W or the spacebar. Good luck and don't stop running.\n"+
+    "Click anywhere to begin your journey.", 250, 150, 700, 400);
   popStyle();
-  
 }
 
 
-void settingsPage() {
+void endGame() {
+  pushStyle();
+  background(#030146);
+  drawStars();
+  fill(#FFEE2C);
+  textSize(45);
+  textAlign(CENTER, CENTER);
+  text("Congratulations!\nYou managed to escape!\nBut can you do it faster?", width/2, 150);
+  textSize(30);
+  text("Your times:", width/2, 350);
+  stroke(#FFEE2C);
+  strokeWeight(4);
+  line(500, 375, 700, 375);
+  for (int i=0; i<4; i++) {
+    text(time[i][0]+":"+time[i][1]+"."+time[i][2], width/2, 400+i*50);
+  }
+  noStroke();
+  fill(100);
+  rect(900, 450, 200, 75);
+  fill(255);
+  textSize(30);
+  text("Retry", 1000, 487);
+  if (mouseX>900&&mouseX<1100&&mouseY>450&&mouseY<525) {
+
+    if (mousePressed) {
+      levelCount=1;
+      resetGame();
+      gameStart();
+    }
+  }
+  popStyle();
 }

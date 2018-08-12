@@ -1,16 +1,21 @@
+import processing.sound.*;
+
 static float grav=0.5;
 Player p;
 Level l;
 int cols, rows, blockSize=20;
 int[][] levelLayout;
+int[][] time=new int[4][3];
 int loopCounter=0;
 ArrayList<PVector> stars=new ArrayList<PVector>();
 ArrayList<Effect> effects=new ArrayList<Effect>();
 
 
-int gameState=0, loopCSize=30, levelCount=3, timeToDisappear=4000;
+int gameState=0, loopCSize=30, levelCount=1, timeToDisappear=3000;
 float loopCAngle=-15, mill;
 int seconds, minutes, timerStart;
+
+boolean firstScreen;
 
 
 PImage portalGate;
@@ -21,6 +26,7 @@ PImage safePlatform;
 PImage spike;
 PImage end;
 PImage staticB;
+SoundFile hit, portal, jump, fall, win;
 PImage[] playerIdle= new PImage[2];
 PImage[] playerRunR= new PImage[4];
 PImage[] playerRunL=new PImage[4];
@@ -36,6 +42,9 @@ void setup() {
   cols=width/blockSize;
   rows=height/blockSize;
   //frameRate(15);
+  thread("loadStuff");
+
+  populateStars();
 }
 
 void loadStuff() {
@@ -48,6 +57,13 @@ void loadStuff() {
   staticB=loadImage("data/static.png");
   end=loadImage("endBase.png");
   main=loadFont("Power_Red_and_Green-50.vlw");
+
+  hit=new SoundFile(this, "hit.wav");
+  jump=new SoundFile(this, "jump.wav");
+  portal=new SoundFile(this, "portal.wav");
+  fall=new SoundFile(this, "void.wav");
+  win=new SoundFile(this, "win.wav");
+
   textFont(main, 50);
 
   for (int i=0; i<playerIdle.length; i++) {
@@ -58,8 +74,6 @@ void loadStuff() {
     playerRunR[i]=loadImage("data/run"+i+".png");
     playerRunL[i]=loadImage("data/run"+i+"L.png");
   }
-
-  populateStars();
 }
 
 void populateStars() {
@@ -80,7 +94,10 @@ void draw() {
     mainGame();
     break;
   case 2:
-    settingsPage();
+    endGame();
+    break;
+  case 3:
+    introPage();
     break;
   }
 }
@@ -95,20 +112,21 @@ void gameStart() {
 
 void keyPressed() {
   if (gameState==1) {
+    if (key==ESC) {
+      key=0;
+      gameState=0;
+    }
     if (key=='a'||key=='A') {
       p.movingLeft=true;
     } else if (key=='d'||key=='D') {
       p.movingRight=true;
     }
-    if (key=='w'||key=='W') {
+    if (key=='w'||key=='W'||key==' ') {
       p.jump();
     }
     if (key=='r') {
       resetGame();
     }
-  }
-  if (key==' ') {
-    saveFrame("snapshot###.png");
   }
 }
 
@@ -122,10 +140,12 @@ void keyReleased() {
     }
   }
 }
-void mousePressed() {
 
-  if (gameState==1) {
-    p.pos.x=mouseX;
+void mousePressed() {
+  if (gameState==3) {
+    gameStart();
+  } else if (gameState==1) {
+    p.pos.x=mouseX; 
     p.pos.y=mouseY;
   }
 }
@@ -147,6 +167,7 @@ int[][] readLevel(int levelSelector) {
 
 void checkGameOver() {
   if (p.touchBottom()) {
+    fall.play();
     resetGame();
   }
 }
@@ -219,15 +240,22 @@ void loopLevel() {
   }
 }
 void advanceLevel() {
-  loopCounter=0;
-  levelCount++;
-  mill=0;
-  seconds=0;
-  minutes=0;
-  timeToDisappear-=300;
-  levelLayout=readLevel(levelCount);
-  l=new Level(levelLayout);
-  p.reset();
+  time[levelCount-1][0]=minutes;
+  time[levelCount-1][1]=seconds;
+  time[levelCount-1][2]=(int)mill;
+  if (levelCount<4) {
+    loopCounter=0;
+    levelCount++;
+    mill=0;
+    seconds=0;
+    minutes=0;
+    timeToDisappear-=300;
+    levelLayout=readLevel(levelCount);
+    l=new Level(levelLayout);
+    p.reset();
+  } else {
+    gameState=2;
+  }
 }
 
 void createShootingStar() {
