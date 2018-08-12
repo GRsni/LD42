@@ -31,7 +31,11 @@ void mainGame() {
   drawStars();
   pushMatrix();
   translate(20, 50);
-  rotate(radians(-15));
+  rotate(radians(loopCAngle));
+  if (loopCSize>20) { 
+    loopCSize--;
+  }
+  textSize(loopCSize);
   text("Loops: "+loopCounter, 20, 20);
   popMatrix();
   //println(l.playerPos.x, l.playerPos.y);

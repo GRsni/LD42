@@ -142,7 +142,7 @@ class Player {
   }
 
   void lateralCollision(Block[][] array) {
-    if (col<cols-1) {//blocks to the right
+    if (col<cols-1&&row<rows-1) {//blocks to the right
       Block bL=array[col+1][row];
       if (bL.alive) {
         if (inside(bL, 1)) {
@@ -154,7 +154,7 @@ class Player {
         slidingRight=false;
       }
     } 
-    if (col>1) {//blocks to the left
+    if (col>1&&row<rows-1) {//blocks to the left
 
       Block bL=array[col-1][row];
       if (bL.alive) {

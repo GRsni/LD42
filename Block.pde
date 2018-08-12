@@ -22,16 +22,26 @@ class Block {
     rectMode(CORNERS);
     if (alive) {
       if (type==1) {
-        
+
         if (touched) tint(250, 0, 0, 250);
         image(baseTile, left, top);
       } else if (type==2) {
       } else if (type==3) {
         image(safePlatform, left, top);
       } else if (type==4) {
-        noStroke();
-        fill(#FF7979);
-        rect(left, top, right, bottom);
+        if (cols-col==4) {
+          image(end, left, top);
+        }
+        if (col==cols-1) {
+          image(portalBase, left, top);
+          for (int i=0; i<loopCounter; i++) {
+            image(portalGate, left, top-(i+1)*20);
+          }
+          image(portalTop, left, top-(levelCount+3)*20);
+        }
+        //noStroke();
+        //fill(#FF7979);
+        //rect(left, top, right, bottom);
       }
     }
     popStyle();
@@ -39,7 +49,7 @@ class Block {
 
   void update() {
     if (touched) {
-      if (millis()-lastTimeTouched>4500) {
+      if (millis()-lastTimeTouched>timeToDisappear) {
         //type=0;
         alive=false;
       }
@@ -55,9 +65,7 @@ class Block {
     } else if (type==2) {
       resetGame();
     } else if (type==4) {
-      enterPortal(new PVector(p.pos.x, p.pos.y));
-      loopCounter++;
-      p.reset();
+      loopLevel();
     }
   }
 }

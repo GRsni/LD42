@@ -4,9 +4,9 @@ class Effect {
   color col;
 
 
-  Effect(PVector p, PVector speed, int t) {
-    pos=p;
-    vel=speed;
+  Effect(float px, float py, float sx, float sy, int t) {
+    pos=new PVector(px, py);
+    vel=new PVector(sx, sy);
     type=t;
     if (type==1) col=color(random(255), random(255), random(255));
   }
@@ -15,7 +15,7 @@ class Effect {
     pushStyle();
     if (type==1) {
       stroke(col);
-      strokeWeight(6);
+      strokeWeight((int)random(3,8));
       point(pos.x, pos.y);
     }
 
@@ -23,10 +23,12 @@ class Effect {
   }
 
   void update() {
-    life++; 
-    vel.y+=grav*.1;
-    vel.mult(.96);
-    pos.add(vel);
+    if (type==1) {
+      life++; 
+      vel.y+=grav*.1;
+      vel.mult(.96);
+      pos.add(vel);
+    }
   }
   void delete() {
   }
