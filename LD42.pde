@@ -8,8 +8,9 @@ ArrayList<PVector> stars=new ArrayList<PVector>();
 ArrayList<Effect> effects=new ArrayList<Effect>();
 
 
-int gameState=0, loopCSize=30, levelCount=1, timeToDisappear=4000;
-float loopCAngle=-15;
+int gameState=0, loopCSize=30, levelCount=3, timeToDisappear=4000;
+float loopCAngle=-15, mill;
+int seconds, minutes, timerStart;
 
 
 PImage portalGate;
@@ -19,11 +20,13 @@ PImage baseTile;
 PImage safePlatform;
 PImage spike;
 PImage end;
+PImage staticB;
 PImage[] playerIdle= new PImage[2];
 PImage[] playerRunR= new PImage[4];
 PImage[] playerRunL=new PImage[4];
 PImage[] playerFall=new PImage[2];
 
+PFont main;
 
 
 void setup() {
@@ -32,6 +35,7 @@ void setup() {
   size(1200, 600);
   cols=width/blockSize;
   rows=height/blockSize;
+  //frameRate(15);
 }
 
 void loadStuff() {
@@ -40,7 +44,12 @@ void loadStuff() {
   portalBase=loadImage("data/portalBase.png");
   portalTop=loadImage("data/portalTop.png");
   safePlatform=loadImage("data/safe.png");
+  spike=loadImage("data/spike.png");
+  staticB=loadImage("data/static.png");
   end=loadImage("endBase.png");
+  main=loadFont("Power_Red_and_Green-50.vlw");
+  textFont(main, 50);
+
   for (int i=0; i<playerIdle.length; i++) {
     playerIdle[i]=loadImage("data/idle"+i+".png");
     playerFall[i]=loadImage("data/fall"+i+".png");
@@ -61,6 +70,7 @@ void populateStars() {
 
 
 void draw() {
+
   switch(gameState) {
   case  0:
     menuPage();
@@ -80,8 +90,7 @@ void gameStart() {
   loopCSize=35;
   levelLayout=readLevel(levelCount);
   l=new Level(levelLayout);
-  PVector auxPos=new PVector(l.playerPos.x, l.playerPos.y);
-  p=new Player(auxPos);
+  p=new Player(l.startX, l.startY);
 }
 
 void keyPressed() {
@@ -122,75 +131,17 @@ void mousePressed() {
 }
 
 int[][] readLevel(int levelSelector) {
-  int[][] out=new int[cols+1][rows];
-  switch(levelSelector) {
-  case 1:
-    for (int i=0; i<cols; i++) {
-      for (int j=0; j<rows; j++) {
-        if (i<10) {
-          if (j>11&&j<14) { //safe zone
-            out[i][j]=3;
-          } else if (j>13) {
-            out[i][j]=1;
-          }
-        } else if (i<20) {
-          if (j>24) {
-            out[i][j]=1;
-          }
-        } else if (i<35) {
-          if (j>20) { 
-            out[i][j]=1;
-          }
-        } else if (i<45) {
-          if (j>15) { 
-            out[i][j]=1;
-          }
-        } else {
-          if (j>10) { 
-            out[i][j]=1;
-          }
-        }
-        if (i>55) {
-          if (j<12&&j>10) {
-            out[i][j]=4;
-          }
-        }
-      }
-    }//player start position  
-    out[cols][0]=50;
-    out[cols][1]=100;
-    break;
-  case 2 :
-    for (int i=0; i<cols; i++) {
-      for (int j=0; j<rows; j++) {
-        if (i<9) {
-          if (j>9) { 
-            out[i][j]=3;
-          } 
-          if (j>12) { 
-            out[i][j]=1;
-          }
-        } else if (i>15&&i<22) {
-          if (j>9) { 
-            out[i][j]=1;
-          }
-        } else if (i>28&&i<37) {
-          if (j>12) { 
-            out[i][j]=1;
-          }
-        } else if (i>49) {
-          if (i>55&&j==19) {
-            out[i][j]=4;
-          } else if (j>18) { 
-            out[i][j]=1;
-          }
-        }
-      }
+  int[][] out=new int[cols][rows+1];
+  String[] file=loadStrings("level"+levelSelector+".txt");
+  for (int i=0; i<rows; i++) {
+    char[] indexes=file[i].toCharArray();
+    for (int j=0; j<indexes.length; j++) {
+      out[j][i]=indexes[j]-48;
     }
-    out[cols][0]=50;
-    out[cols][1]=80;
-    break;
   }
+  String[] startPos=file[rows].split(" ");
+  out[0][rows]=Integer.parseInt(startPos[0]);
+  out[1][rows]=Integer.parseInt(startPos[1]);
   return out;
 }
 
@@ -200,34 +151,57 @@ void checkGameOver() {
   }
 }
 
-void checkCompleteLevel() {
-  //if(p.pos.x
-}
 
 void resetGame() {
   loopCSize=35;
   loopCounter=0;
   l.layout=l.setupLevel(levelLayout);
+  mill=0;
+  seconds=0;
+  minutes=0;
   p.reset();
 }
 
-void timer() {
+void calculateTime() {
+
+  mill+=1000/frameRate;
+  if (mill>999) {
+    seconds++;
+    mill=0;
+  }
+  if (seconds>59) {
+    seconds=0;
+    minutes++;
+  }
+  showTimer();
+}
+
+void showTimer() {
+  pushMatrix();
+  pushStyle();
+  fill(255);
+  translate(width-150, 50);
+  rotate(radians(10));
+  textSize(loopCSize+10);
+  text(minutes+":"+seconds+"."+(int)mill, 0, 0);
+  popStyle();
+  popMatrix();
 }
 
 void drawStars() {
   for (PVector p : stars) {
     stroke( #FAE7A9);
-    strokeWeight(ceil(stars.indexOf(p)/10));
+    int offSet=0;
+    if (random(1)>.95) offSet=2;
+    else offSet=0;
+    strokeWeight(ceil(stars.indexOf(p)/10)+offSet);
     point(p.x, p.y);
   }
 }
 
 void enterPortal(PVector origin) {
   for (int i=0; i<15; i++) {
-    float angle=random(240, 300);
-    PVector dir=PVector.fromAngle(radians(angle)).setMag(random(1.5, 2.5));
-    //println(angle, dir.x, dir.y);
-    effects.add(new Effect(origin.x, origin.y, dir.x, dir.y, 1));
+    effects.add(new Effect(origin.x, origin.y, 1));
   }
 }
 
@@ -235,15 +209,29 @@ void loopLevel() {
   loopCSize=35;
   enterPortal(new PVector(p.pos.x, p.pos.y));
   loopCounter++;
+  if (loopCounter==3) {
+    effects.add(new Effect(width-300, p.pos.y-75, 3));
+  }
   p.reset();
-  if (loopCounter>levelCount+2) {
+
+  if (loopCounter>3) {
     advanceLevel();
   }
 }
 void advanceLevel() {
   loopCounter=0;
   levelCount++;
+  mill=0;
+  seconds=0;
+  minutes=0;
   timeToDisappear-=300;
   levelLayout=readLevel(levelCount);
   l=new Level(levelLayout);
+  p.reset();
+}
+
+void createShootingStar() {
+  float x=random(300, width-300);
+  float y=random(50, 200);
+  effects.add(new Effect(x, y, 2));
 }

@@ -6,8 +6,8 @@ class Player {
   int col, row, fCount;
 
 
-  Player(PVector p) {
-    pos=p;
+  Player(float x, float y) {
+    pos=new PVector(x, y);
     top=pos.y;
     left=pos.x;
     bottom=pos.y+h;
@@ -35,9 +35,9 @@ class Player {
       }
       if (movingRight||vel.x>0) {//moving to the right
         image(playerRunR[fCount], left, top);
-      } else if (movingLeft||vel.x<0) {
+      } else if (movingLeft||vel.x<0) {//moving to the left
         image(playerRunL[fCount], left, top);
-      } if (vel.y>0) {
+      } else if (vel.y>0&&vel.y>abs(vel.x)) {//if falling
         if (fCount>1) fCount=0;
         image(playerFall[fCount], left, top);
       }
@@ -69,7 +69,7 @@ class Player {
     vel.add(acc);
     if (!ground&&(slidingLeft||slidingRight)) {
       //println("sliding speed");
-      vel.y+=grav*.2;
+      vel.y+=grav*.1;
     } else  if (!ground) {
       vel.y+=grav;
     }
@@ -82,6 +82,11 @@ class Player {
     pos.x=constrain(pos.x, 0, width-w);
     pos.y=constrain(pos.y, 0, height);
     acc.mult(0);
+  }
+
+  void setPos(float x, float y) {
+    pos.x=x;
+    pos.y=y;
   }
 
 
@@ -100,6 +105,19 @@ class Player {
       PVector jumpDir=new PVector(0, -jumpAmount);
       vel.add(jumpDir);
       pos.add(vel);
+    } else {
+      float jumpAmount=15;
+      if (slidingLeft) {
+        float angle=315;
+        PVector jumpDir=PVector.fromAngle(radians(angle)).setMag(jumpAmount);
+        vel.add(jumpDir);
+        pos.add(vel);
+      } else if (slidingRight) {
+        float angle=235;
+        PVector jumpDir=PVector.fromAngle(radians(angle)).setMag(jumpAmount);
+        vel.add(jumpDir);
+        pos.add(vel);
+      }
     }
   }
 
@@ -115,18 +133,17 @@ class Player {
   }
 
   void reset() {
-    p.pos.x=l.playerPos.x;
-    p.pos.y=l.playerPos.y;
+    setPos(l.startX,l.startY);
     acc.mult(0);
     vel.mult(0);
   }
 
   void checkBottomCollision() {
 
-    //for (int i=row; i<rows; i++) {
-    if (row<rows-1) {
-      Block b=l.layout[col][row+1];
+    if (row<rows-2) {
+      Block b=l.layout[col][row+1];//check the block directly below
       if (b.alive) {
+        //println(frameCount+"block below alive", vel.y);
         if (inside(b, 2)) {
           ground=true;
           jumping=false;
@@ -134,9 +151,17 @@ class Player {
           vel.y=0;
         } else {
           ground=false;
+          if (vel.y>0) {
+            vel.y*=.6;
+          }
         }
       } else {
         ground=false;
+      }
+      if (vel.y>8) {
+        if (l.layout[col][row+2].alive) {
+          vel.y*=.6;
+        }
       }
     }
   }

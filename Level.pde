@@ -1,10 +1,11 @@
 class Level {
   Block[][] layout=new Block[cols][rows];
-  PVector playerPos;
+  float startX, startY;
 
   Level(int[][] levelArray) {
     layout=setupLevel(levelArray);
-    playerPos=new PVector(levelArray[cols][0], levelArray[cols][1]);
+    startX=levelArray[0][rows];
+    startY=levelArray[1][rows];
   }
 
   void show() {
@@ -38,7 +39,7 @@ class Level {
       }
     }
     if (p.col<cols-1) {
-      if (p.row>1) {
+      if (p.row>1&&p.row<rows-1) {
         Block bL=layout[p.col+1][p.row];
         if (bL.type!=4) {
           if (p.inside(bL, 1)) {
@@ -48,7 +49,7 @@ class Level {
       }
     }
     if (p.col>1) {
-      if (p.row>1) {
+      if (p.row>1&&p.row<rows-1) {
         Block bL=layout[p.col-1][p.row];
         if (bL.type!=4) {
           if (p.inside(bL, 3)) {

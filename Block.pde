@@ -1,6 +1,6 @@
 class Block {
   PVector pos;
-  int col, row, type;//0=air, 1=platform, 2=spikes, 3=safe
+  int col, row, type;//0=air, 1=platform, 2=spikes, 3=safe, 4=end, 5:static
   float top, bottom, left, right;
   boolean touched, alive=true, safe;
   int lastTimeTouched;
@@ -37,12 +37,15 @@ class Block {
           for (int i=0; i<loopCounter; i++) {
             image(portalGate, left, top-(i+1)*20);
           }
-          image(portalTop, left, top-(levelCount+3)*20);
+          image(portalTop, left, top-4*20);
         }
         //noStroke();
         //fill(#FF7979);
         //rect(left, top, right, bottom);
+      }else if(type==5){
+        image(staticB, left, top);  
       }
+      
     }
     popStyle();
   }
