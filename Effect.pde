@@ -26,7 +26,7 @@ class Effect {
       point(pos.x, pos.y);
     } else if (type==2) {
       pushStyle();
-      strokeWeight(8);
+      strokeWeight(map(life, 0, 90, 5, 2));
       //colorMode(HSB, 360, 100, 100);
       stroke(#FAE7A9, map(life, 0, 90, 255, 0));
       point(pos.x, pos.y);
@@ -52,15 +52,13 @@ class Effect {
       vel.mult(.96);
       pos.add(vel);
     } else if (type==2) {
-      life+=3;
+      life+=4;
       vel.y+=grav*.5;
       vel.mult(.9);
       pos.add(vel);
     } else if (type==3) {
       life++;
     }
-  }
-  void delete() {
   }
 
   PVector setSpeed() {

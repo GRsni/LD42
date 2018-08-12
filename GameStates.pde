@@ -116,7 +116,8 @@ void endGame() {
   textSize(30);
   text("Retry", 1000, 487);
   if (mouseX>900&&mouseX<1100&&mouseY>450&&mouseY<525) {
-
+    textSize(20);
+    text("Hint: Press r to reset faster", 1000, 500);
     if (mousePressed) {
       levelCount=1;
       resetGame();

@@ -11,7 +11,7 @@ ArrayList<PVector> stars=new ArrayList<PVector>();
 ArrayList<Effect> effects=new ArrayList<Effect>();
 
 
-int gameState=0, loopCSize=30, levelCount=1, timeToDisappear=3000;
+int gameState=0, loopCSize=30, levelCount=4, timeToDisappear=4500;
 float loopCAngle=-15, mill;
 int seconds, minutes, timerStart;
 
@@ -144,9 +144,6 @@ void keyReleased() {
 void mousePressed() {
   if (gameState==3) {
     gameStart();
-  } else if (gameState==1) {
-    p.pos.x=mouseX; 
-    p.pos.y=mouseY;
   }
 }
 
