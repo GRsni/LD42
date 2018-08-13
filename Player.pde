@@ -9,7 +9,7 @@ class Player {
   Player(float x, float y) {
     pos=new PVector(x, y);
     top=pos.y;
-    left=pos.x;
+    left=pos.x;  
     bottom=pos.y+h;
     right=pos.x+w;
     //println(top, left, bottom, right);
@@ -100,7 +100,7 @@ class Player {
 
   void jump() {
     if (ground) {
-      jump.play();
+      jump.play(0);
       ground=false;
       jumping=true;
       //println("jumping");
@@ -111,13 +111,13 @@ class Player {
     } else {
       float jumpAmount=15;
       if (slidingLeft) {
-        jump.play();
+        jump.play(0);
         float angle=315;
         PVector jumpDir=PVector.fromAngle(radians(angle)).setMag(jumpAmount);
         vel.add(jumpDir);
         pos.add(vel);
       } else if (slidingRight) {
-        jump.play();
+        jump.play(0);
         float angle=235;
         PVector jumpDir=PVector.fromAngle(radians(angle)).setMag(jumpAmount);
         vel.add(jumpDir);

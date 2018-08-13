@@ -67,10 +67,10 @@ class Block {
         lastTimeTouched=millis();
       }
     } else if (type==2) {
-      hit.play();
+      hit.play(0);
       resetGame();
     } else if (type==4) {
-      portal.play();
+      portal.play(0);
       loopLevel();
     }
   }

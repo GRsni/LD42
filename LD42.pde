@@ -1,4 +1,5 @@
-import processing.sound.*;
+import ddf.minim.*;
+
 
 static float grav=0.5;
 Player p;
@@ -11,7 +12,7 @@ ArrayList<PVector> stars=new ArrayList<PVector>();
 ArrayList<Effect> effects=new ArrayList<Effect>();
 
 
-int gameState=0, loopCSize=30, levelCount=4, timeToDisappear=4500;
+int gameState=0, loopCSize=30, levelCount=1, timeToDisappear=4500;
 float loopCAngle=-15, mill;
 int seconds, minutes, timerStart;
 
@@ -26,7 +27,10 @@ PImage safePlatform;
 PImage spike;
 PImage end;
 PImage staticB;
-SoundFile hit, portal, jump, fall, win;
+
+Minim minim;
+
+AudioPlayer hit, portal, jump, fall, win;
 PImage[] playerIdle= new PImage[2];
 PImage[] playerRunR= new PImage[4];
 PImage[] playerRunL=new PImage[4];
@@ -36,6 +40,7 @@ PFont main;
 
 
 void setup() {
+  minim=new Minim(this);
   loadStuff();
   //fullScreen();
   size(1200, 600);
@@ -58,11 +63,11 @@ void loadStuff() {
   end=loadImage("endBase.png");
   main=loadFont("Power_Red_and_Green-50.vlw");
 
-  hit=new SoundFile(this, "hit.wav");
-  jump=new SoundFile(this, "jump.wav");
-  portal=new SoundFile(this, "portal.wav");
-  fall=new SoundFile(this, "void.wav");
-  win=new SoundFile(this, "win.wav");
+  hit=minim.loadFile("hit.wav");
+  jump=minim.loadFile("jump.wav");
+  portal=minim.loadFile("portal.wav");
+  fall=minim.loadFile("void.wav");
+  win=minim.loadFile("win.wav");
 
   textFont(main, 50);
 
@@ -164,7 +169,7 @@ int[][] readLevel(int levelSelector) {
 
 void checkGameOver() {
   if (p.touchBottom()) {
-    fall.play();
+    fall.play(0);
     resetGame();
   }
 }
