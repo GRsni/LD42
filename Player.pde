@@ -139,13 +139,13 @@ class Player {
 
   void reset() {
     setPos(l.startX, l.startY);
-    acc.mult(0);
-    vel.mult(0);
+    acc=new PVector(0, 0);
+    vel=new PVector(0, 0);
   }
 
   void checkBottomCollision() {
 
-    if (row<rows-2) {
+    if (row<rows-1) {
       Block b=l.layout[col][row+1];//check the block directly below
       if (b.alive) {
         //println(frameCount+"block below alive", vel.y);
@@ -164,8 +164,18 @@ class Player {
         ground=false;
       }
       if (vel.y>8) {
-        if (l.layout[col][row+2].alive) {
-          vel.y*=.6;
+        Block secondBelow;
+        try {
+          secondBelow=l.layout[col][row+2];
+          if (secondBelow.alive) {
+            if (p.inside(secondBelow, 2)) {
+              vel.y*=.4;
+            }
+          }
+        }
+        catch(IndexOutOfBoundsException e) {
+          vel.y*=.5;
+          println("catched block outside");
         }
       }
     }

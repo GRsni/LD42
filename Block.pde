@@ -1,6 +1,6 @@
 class Block {
   PVector pos;
-  int col, row, type;//0=air, 1=platform, 2=spikes, 3=safe, 4=end, 5:static
+  int col, row, type;//0=air, 1=platform, 2=spikes, 3=safe, 4=end, 5=static
   float top, bottom, left, right;
   boolean touched, alive=true, safe;
   int lastTimeTouched;
