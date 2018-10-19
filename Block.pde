@@ -2,7 +2,7 @@ class Block {
   PVector pos;
   int col, row, type;//0=air, 1=platform, 2=spikes, 3=safe, 4=end, 5=static
   float top, bottom, left, right;
-  boolean touched, alive=true, safe;
+  boolean touched, alive=true, safe, spawning;
   int lastTimeTouched;
 
   Block(int I, int J, int t) {
@@ -53,7 +53,7 @@ class Block {
 
   void update() {
     if (touched) {
-      if (millis()-lastTimeTouched>timeToDisappear) {
+      if (millis()-lastTimeTouched>timeForBlocksToDisappear) {
         //type=0;
         alive=false;
       }

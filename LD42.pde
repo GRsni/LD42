@@ -12,7 +12,7 @@ ArrayList<PVector> stars=new ArrayList<PVector>();
 ArrayList<Effect> effects=new ArrayList<Effect>();
 
 
-int gameState=0, loopCSize=30, levelCount=3, timeToDisappear=4500;
+int gameState=0, loopCSize=30, levelCount=3, timeForBlocksToDisappear=4500;
 float loopCAngle=-15, mill;
 int seconds, minutes, timerStart;
 
@@ -110,7 +110,7 @@ void draw() {
 void gameStart() {
   gameState=1;
   loopCSize=35;
-  levelLayout=readLevel(levelCount);
+  levelLayout=readLevelFile(levelCount);
   l=new Level(levelLayout);
   p=new Player(l.startX, l.startY);
 }
@@ -155,7 +155,7 @@ void mousePressed() {
   }
 }
 
-int[][] readLevel(int levelSelector) {
+int[][] readLevelFile(int levelSelector) {
   int[][] out=new int[cols][rows+1];
   String[] file=loadStrings("level"+levelSelector+".txt");
   for (int i=0; i<rows; i++) {
@@ -217,15 +217,13 @@ void showTimer() {
 void drawStars() {
   for (PVector p : stars) {
     stroke( #FAE7A9);
-    int offSet=0;
-    if (random(1)>.95) offSet=2;
-    else offSet=0;
+    int offSet=random(1)>.999?3:0;
     strokeWeight(ceil(stars.indexOf(p)/10)+offSet);
     point(p.x, p.y);
   }
 }
 
-void enterPortal(PVector origin) {
+void createEnterPortalVisualEffect(PVector origin) {
   for (int i=0; i<15; i++) {
     effects.add(new Effect(origin.x, origin.y, 1));
   }
@@ -233,7 +231,7 @@ void enterPortal(PVector origin) {
 
 void loopLevel() {
   loopCSize=35;
-  enterPortal(new PVector(p.pos.x, p.pos.y));
+  createEnterPortalVisualEffect(new PVector(p.pos.x, p.pos.y));
   loopCounter++;
   if (loopCounter==3) {
     effects.add(new Effect(width-300, p.pos.y-75, 3));
@@ -254,8 +252,8 @@ void advanceLevel() {
     mill=0;
     seconds=0;
     minutes=0;
-    timeToDisappear-=300;
-    levelLayout=readLevel(levelCount);
+    timeForBlocksToDisappear-=300;
+    levelLayout=readLevelFile(levelCount);
     l=new Level(levelLayout);
     p.reset();
   } else {
