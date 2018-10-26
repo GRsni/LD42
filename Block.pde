@@ -71,7 +71,7 @@ class Block {
     } else if (type==2) {
       hit.play(0);
       resetGame();
-    } else if (type==4) {
+    } else if (type==4||type==6) {
       portal.play(0);
       loopLevel();
     }

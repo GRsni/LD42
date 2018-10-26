@@ -12,7 +12,7 @@ ArrayList<PVector> stars=new ArrayList<PVector>();
 ArrayList<Effect> effects=new ArrayList<Effect>();
 
 
-int gameState=0, loopCSize=30, levelCount=3, timeForBlocksToDisappear=4500;
+int gameState=0, loopCSize=30, levelCount=1, timeForBlocksToDisappear=4500;
 float loopCAngle=-15, mill;
 int seconds, minutes, timerStart;
 
