@@ -20,7 +20,7 @@ void menuPage() {
   text("Start", width/2, 387);
   if (mouseX>width/2-200&&mouseX<width/2+200&&mouseY>350&&mouseY<425) {
     fill(100);
-    textSize(15);
+    textSize(17);
     text("Seriously, you shouldn't stop.", width/2, 450);
 
     if (mousePressed) {
@@ -86,9 +86,9 @@ void introPage() {
   drawStars();
   fill(255);
   textSize(30);
-  text("Hey, listen!\nYou've escaped from the nearly-impossible-to-escape space jail, but your only way out is through a series of portals. "+
+  text("Hey, listen!\nYou've escaped from the nearly-impossible-to-escape space prison, but your only way out is through a series of portals. "+
     "Move with A and D, and jump with W or the spacebar. Good luck and don't stop running.\n"+
-    "Click anywhere to begin your journey.", 250, 150, 700, 400);
+    "Click anywhere to begin your journey. Good luck.", 250, 150, 700, 400);
   popStyle();
 }
 

@@ -16,6 +16,7 @@ class Level {
       }
     }
   }
+  
   void update(Player p) {
     playerTouch(p);
   }

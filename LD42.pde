@@ -49,7 +49,7 @@ void setup() {
   //frameRate(15);
   thread("loadStuff");
 
-  populateStars();
+  populateStarArray();
 }
 
 void loadStuff() {
@@ -78,12 +78,6 @@ void loadStuff() {
   for (int i=0; i<playerRunR.length; i++) {
     playerRunR[i]=loadImage("data/run"+i+".png");
     playerRunL[i]=loadImage("data/run"+i+"L.png");
-  }
-}
-
-void populateStars() {
-  for (int i=0; i<random(40, 80); i++) {
-    stars.add(new PVector(random(width), random(height)));
   }
 }
 
@@ -182,9 +176,7 @@ void resetGame() {
   loopCSize=35;
   loopCounter=0;
   l.layout=l.setupLevel(levelLayout);
-  mill=0;
-  seconds=0;
-  minutes=0;
+  resetElapsedTime();
   p.reset();
 }
 
@@ -202,6 +194,12 @@ void calculateTime() {
   showTimer();
 }
 
+void resetElapsedTime(){
+  mill=0;
+  seconds=0;
+  minutes=0;
+}
+
 void showTimer() {
   pushMatrix();
   pushStyle();
@@ -212,6 +210,12 @@ void showTimer() {
   text(minutes+":"+seconds+"."+(int)mill, 0, 0);
   popStyle();
   popMatrix();
+}
+
+void populateStarArray() {
+  for (int i=0; i<random(40, 80); i++) {
+    stars.add(new PVector(random(width), random(height)));
+  }
 }
 
 void drawStars() {
@@ -242,6 +246,7 @@ void loopLevel() {
     advanceLevel();
   }
 }
+
 void advanceLevel() {
   time[levelCount-1][0]=minutes;
   time[levelCount-1][1]=seconds;
@@ -249,9 +254,7 @@ void advanceLevel() {
   if (levelCount<4) {
     loopCounter=0;
     levelCount++;
-    mill=0;
-    seconds=0;
-    minutes=0;
+    resetElapsedTime();
     timeForBlocksToDisappear-=300;
     levelLayout=readLevelFile(levelCount);
     l=new Level(levelLayout);
